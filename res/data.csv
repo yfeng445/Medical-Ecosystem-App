@@ -1,0 +1,26 @@
+Global Network,Hospital1,Emergency Organization1,EmergencyPhysicianRole
+Global Network,Hospital1,Emergency Organization1,EmergencyNurseRole
+Global Network,Hospital1,Emergency Organization2,EmergencyPhysicianRole
+Global Network,Hospital1,Emergency Organization2,EmergencyNurseRole
+Global Network,Hospital2,Medical Organization1,MedicalPhysicianRole
+Global Network,Hospital2,Medical Organization1,MedicalNurseRole
+Global Network,Hospital2,Medical Organization2,MedicalPhysicianRole
+Global Network,Hospital2,Medical Organization2,MedicalNurseRole
+Global Network,Hospital1,Surgical Organization1,SurgicalPhysicianRole
+Global Network,Hospital1,Surgical Organization1,SurgicalNurseRole
+Global Network,Hospital2,Surgical Organization2,SurgicalPhysicianRole
+Global Network,Hospital2,Surgical Organization2,SurgicalAnesthesiologistRole
+Global Network,Hospital1,Pharmacy Organization1,PharmacyPharmacistRole
+Global Network,Hospital2,Pharmacy Organization2,PharmacyPharmacistRole
+Global Network,Medical Company1,Lab Organization1,LabResearcherRole
+Global Network,Medical Company1,Lab Organization1,LabAssistantRole
+Global Network,Medical Company2,Lab Organization2,LabResearcherRole
+Global Network,Medical Company2,Lab Organization2,LabAssistantRole
+Global Network,Medical Company1,Sales Organization1,SalesRepRole
+Global Network,Medical Company2,Sales Organization2,SalesRepRole
+Global Network,Pharmacy1,Medicine Organization1,MedicineSupplierRole
+Global Network,Pharmacy2,Medicine Organization2,MedicineSupplierRole
+Global Network,Pharmacy1,Supplement Organization1,SupplementSupplierRole
+Global Network,Pharmacy2,Supplement Organization2,SupplementSupplierRole
+Global Network,Insurance1,Case Manager Organization1,InsuranceCaseManagerRole
+Global Network,Insurance2,Case Manager Organization2,InsuranceCaseManagerRole
