@@ -204,6 +204,7 @@ ui\MedicineSupplierRole\MedicineSupplierSendJPanel$1.class
 ui\SystemAdminWorkArea\CreateUserJPanel.class
 ui\SurgicalNurseRole\SurgicalNurseWorkAreaJPanel$1.class
 ui\SurgicalNurseRole\SurgicalNurseWorkAreaJPanel.class
+ui\MedicineSupplierRole\MedicineSupplierReceiveJPanel$5.class
 ui\SystemAdminWorkArea\CreateEnterpriseJPanel$1.class
 ui\SystemAdminWorkArea\CreateUserJPanel$1.class
 ui\SystemAdminWorkArea\ManageUserAccountJPanel$5.class
@@ -214,6 +215,7 @@ ui\SurgicalPhysicianRole\SurgicalPhysicianProcessJPanel.class
 ui\SystemAdminWorkArea\UserDetailsJPanel$6.class
 ui\MedicineSupplierRole\MedicineSupplierProcessJPanel$2.class
 Business\Enterprise\MedicalCompanyEnterprise.class
+ui\EnterpriseAdminRole\EnterpriseAdminWorkAreaJPanel$4.class
 ui\LabAssistantRole\ProcessWorkRequestJPanel.class
 Business\Organization\Organization$Type.class
 ui\MedicalPhysicianRole\MedicalPhysicianWorkAreaJPanel$1.class

@@ -11,6 +11,8 @@ import Business.UserAccount.UserAccount;
 import Business.WorkQueue.LabTestWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import ui.LabAssistantRole.ProcessWorkRequestJPanel;
@@ -26,8 +28,10 @@ public class LabResearcherWorkAreaJPanel extends javax.swing.JPanel {
     private UserAccount userAccount;
     private LabOrganization labOrganization;
     
+    private final Map<Integer, WorkRequest> requestMap = new HashMap<>();
+
     /**
-     * Creates new form LabAssistantWorkAreaJPanel
+     * Creates new form LabAassistantWorkAreaJPanel
      */
     public LabResearcherWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, Organization organization, EcoSystem business) {
         initComponents();
@@ -52,14 +56,19 @@ public class LabResearcherWorkAreaJPanel extends javax.swing.JPanel {
         
         model.setRowCount(0);
         
+        requestMap.clear();
+        
+        int rowIndex = 0;
         for(WorkRequest request : labOrganization.getWorkQueue().getWorkRequestList()){
             Object[] row = new Object[4];
-            row[0] = request;
+            row[0] = request.getMessage();
             row[1] = request.getSender().getEmployee().getName();
             row[2] = request.getReceiver() == null ? null : request.getReceiver().getEmployee().getName();
             row[3] = request.getStatus();
             
             model.addRow(row);
+            requestMap.put(rowIndex, request);
+            rowIndex++;
         }
        
         updateButtonStates();
@@ -75,7 +84,7 @@ public class LabResearcherWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
 
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         UserAccount receiver = request.getReceiver();
         String status = request.getStatus();
 
@@ -172,7 +181,7 @@ public class LabResearcherWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
         
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         request.setReceiver(userAccount);
         request.setStatus("Pending");
         populateTable();
@@ -187,7 +196,7 @@ public class LabResearcherWorkAreaJPanel extends javax.swing.JPanel {
             return;
         }
         
-        LabTestWorkRequest request = (LabTestWorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        LabTestWorkRequest request = (LabTestWorkRequest)requestMap.get(selectedRow);
      
         request.setStatus("Processing");
         

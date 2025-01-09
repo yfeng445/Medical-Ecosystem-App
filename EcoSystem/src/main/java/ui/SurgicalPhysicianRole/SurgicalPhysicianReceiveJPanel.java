@@ -11,6 +11,8 @@ import Business.UserAccount.UserAccount;
 import Business.WorkQueue.LabTestWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,6 +26,8 @@ public class SurgicalPhysicianReceiveJPanel extends javax.swing.JPanel {
     private EcoSystem business;
     private UserAccount userAccount;
     private SurgicalOrganization surgicalOrganization;
+    
+    private final Map<Integer, WorkRequest> requestMap = new HashMap<>();
     
     /**
      * Creates new form LabAssistantWorkAreaJPanel
@@ -50,22 +54,26 @@ public class SurgicalPhysicianReceiveJPanel extends javax.swing.JPanel {
     public void populateTable(){
         DefaultTableModel model = (DefaultTableModel)workRequestJTable.getModel();
         model.setRowCount(0);
+        requestMap.clear();
 
-        String myRole = "Surgical Physician";  
-
+        String myRole = "Surgical Physician"; 
+        
+        int rowIndex = 0;
         for(WorkRequest request : surgicalOrganization.getWorkQueue().getWorkRequestList()){
             if (request instanceof LabTestWorkRequest) {
                 LabTestWorkRequest labRequest = (LabTestWorkRequest) request;
           
                 if (labRequest.getTargetRole().equals(myRole)) {
                     Object[] row = new Object[4];
-                    row[0] = request;
+                    row[0] = request.getMessage();
                     row[1] = request.getSender().getEmployee().getName();
                     row[2] = request.getReceiver() == null ? null : 
                             request.getReceiver().getEmployee().getName();
                     row[3] = request.getStatus();
 
                     model.addRow(row);
+                    requestMap.put(rowIndex, request);
+                    rowIndex++;
                 }
             }
         }
@@ -81,7 +89,7 @@ public class SurgicalPhysicianReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         UserAccount receiver = request.getReceiver();
         
        
@@ -187,7 +195,7 @@ public class SurgicalPhysicianReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         request.setReceiver(userAccount);
         request.setStatus("Pending");
         populateTable();
@@ -202,8 +210,8 @@ public class SurgicalPhysicianReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        LabTestWorkRequest request = (LabTestWorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
-     
+        
+        LabTestWorkRequest request = (LabTestWorkRequest)requestMap.get(selectedRow);
         request.setStatus("Processing");
         
         SurgicalPhysicianProcessJPanel processWorkRequestJPanel = new SurgicalPhysicianProcessJPanel(userProcessContainer, request);

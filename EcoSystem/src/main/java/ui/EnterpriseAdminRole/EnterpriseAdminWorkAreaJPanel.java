@@ -13,10 +13,13 @@ import Business.UserAccount.UserAccount;
 import Business.WorkQueue.LabTestWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -86,6 +89,7 @@ public class EnterpriseAdminWorkAreaJPanel extends javax.swing.JPanel {
         workRequestJTable = new javax.swing.JTable();
         approvalJButton = new javax.swing.JButton();
         refreshJButton = new javax.swing.JButton();
+        btnViewReport = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -141,6 +145,14 @@ public class EnterpriseAdminWorkAreaJPanel extends javax.swing.JPanel {
             }
         });
         add(refreshJButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 30, -1, -1));
+
+        btnViewReport.setText("View Report");
+        btnViewReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewReportActionPerformed(evt);
+            }
+        });
+        add(btnViewReport, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 210, -1, 30));
     }// </editor-fold>//GEN-END:initComponents
 
     private void approvalJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_approvalJButtonActionPerformed
@@ -171,8 +183,79 @@ public class EnterpriseAdminWorkAreaJPanel extends javax.swing.JPanel {
         populateTable();
     }//GEN-LAST:event_refreshJButtonActionPerformed
 
+    private void btnViewReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewReportActionPerformed
+        // TODO add your handling code here:
+        // Gather statistics
+        int totalOrganizations = enterprise.getOrganizationDirectory().getOrganizationList().size();
+        int totalRequests = 0;
+        int completedRequests = 0;
+        int pendingRequests = 0;
+        int approvedRequests = 0;
+
+        // Process all organizations
+        StringBuilder report = new StringBuilder();
+        report.append("ENTERPRISE PERFORMANCE REPORT\n");
+        report.append("=============================\n\n");
+        report.append("Enterprise: ").append(enterprise.getName()).append("\n");
+        report.append("Type: ").append(enterprise.getEnterpriseType().getValue()).append("\n\n");
+        report.append("SUMMARY\n");
+        report.append("--------\n");
+        report.append("Total Organizations: ").append(totalOrganizations).append("\n\n");
+
+        // Collect organization statistics
+        report.append("ORGANIZATION BREAKDOWN\n");
+        report.append("---------------------\n");
+        for (Organization org : enterprise.getOrganizationDirectory().getOrganizationList()) {
+            int orgRequests = org.getWorkQueue().getWorkRequestList().size();
+            totalRequests += orgRequests;
+
+            // Count request statuses
+            for (WorkRequest request : org.getWorkQueue().getWorkRequestList()) {
+                if (request instanceof LabTestWorkRequest) {
+                    LabTestWorkRequest labRequest = (LabTestWorkRequest) request;
+                    if (labRequest.isApproved()) {
+                        approvedRequests++;
+                    }
+                }
+
+                if (request.getStatus().equalsIgnoreCase("Completed")) {
+                    completedRequests++;
+                } else if (request.getStatus().equalsIgnoreCase("Pending")) {
+                    pendingRequests++;
+                }
+            }
+
+            report.append(org.getName()).append(": ").append(orgRequests).append(" requests\n");
+        }
+
+        // Add overall statistics
+        report.append("\nOVERALL STATISTICS\n");
+        report.append("-----------------\n");
+        report.append("Total Requests: ").append(totalRequests).append("\n");
+        report.append("Completed Requests: ").append(completedRequests).append("\n");
+        report.append("Pending Requests: ").append(pendingRequests).append("\n");
+
+        // Calculate rates
+        double completionRate = totalRequests > 0 ? (completedRequests * 100.0 / totalRequests) : 0;
+        double approvalRate = totalRequests > 0 ? (approvedRequests * 100.0 / totalRequests) : 0;
+
+        report.append("Completion Rate: ").append(String.format("%.1f%%", completionRate)).append("\n");
+        report.append("Approval Rate: ").append(String.format("%.1f%%", approvalRate)).append("\n");
+
+        // Show report in a dialog
+        JTextArea textArea = new JTextArea(report.toString());
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(500, 400));
+
+        JOptionPane.showMessageDialog(null, scrollPane,
+                "Enterprise Performance Report",
+                JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_btnViewReportActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton approvalJButton;
+    private javax.swing.JButton btnViewReport;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton refreshJButton;
     private javax.swing.JTable workRequestJTable;

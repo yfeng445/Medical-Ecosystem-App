@@ -11,6 +11,8 @@ import Business.UserAccount.UserAccount;
 import Business.WorkQueue.LabTestWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import ui.LabAssistantRole.ProcessWorkRequestJPanel;
@@ -26,6 +28,8 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
     private UserAccount userAccount;
     private MedicineOrganization medicineOrganization;
     
+    private final Map<Integer, WorkRequest> requestMap = new HashMap<>();
+    
     /**
      * Creates new form LabAssistantWorkAreaJPanel
      */
@@ -37,6 +41,12 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
         this.business = business;
         this.medicineOrganization = (MedicineOrganization)organization;
         
+        processJButton.setEnabled(false);
+        
+        workRequestJTable.getSelectionModel().addListSelectionListener(e -> {
+            updateButtonStates();
+        });
+        
         populateTable();
     }
     
@@ -44,22 +54,26 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
         
         DefaultTableModel model = (DefaultTableModel)workRequestJTable.getModel();
         model.setRowCount(0);
+        requestMap.clear();
 
         String myRole = "Medicine Supplier";  
-
+        
+        int rowIndex = 0;
         for(WorkRequest request : medicineOrganization.getWorkQueue().getWorkRequestList()){
             if (request instanceof LabTestWorkRequest) {
                 LabTestWorkRequest labRequest = (LabTestWorkRequest) request;
           
                 if (labRequest.getTargetRole().equals(myRole)) {
                     Object[] row = new Object[4];
-                    row[0] = request;
+                    row[0] = request.getMessage();
                     row[1] = request.getSender().getEmployee().getName();
                     row[2] = request.getReceiver() == null ? null : 
                             request.getReceiver().getEmployee().getName();
                     row[3] = request.getStatus();
 
                     model.addRow(row);
+                    requestMap.put(rowIndex, request);
+                    rowIndex++;
                 }
             }
         }
@@ -75,7 +89,7 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         UserAccount receiver = request.getReceiver();
         
        
@@ -100,6 +114,7 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
         assignJButton = new javax.swing.JButton();
         processJButton = new javax.swing.JButton();
         refreshJButton = new javax.swing.JButton();
+        btnBack = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -162,6 +177,14 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
             }
         });
         add(refreshJButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 26, -1, -1));
+
+        btnBack.setText("<<<Back");
+        btnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackActionPerformed(evt);
+            }
+        });
+        add(btnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void assignJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignJButtonActionPerformed
@@ -172,7 +195,7 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        WorkRequest request = (WorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        WorkRequest request = requestMap.get(selectedRow);
         request.setReceiver(userAccount);
         request.setStatus("Pending");
         populateTable();
@@ -187,7 +210,7 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
             return;
         }
         
-        LabTestWorkRequest request = (LabTestWorkRequest)workRequestJTable.getValueAt(selectedRow, 0);
+        LabTestWorkRequest request = (LabTestWorkRequest)requestMap.get(selectedRow);
      
         request.setStatus("Processing");
         
@@ -202,8 +225,16 @@ public class MedicineSupplierReceiveJPanel extends javax.swing.JPanel {
         populateTable();
     }//GEN-LAST:event_refreshJButtonActionPerformed
 
+    private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
+        // TODO add your handling code here:
+        userProcessContainer.remove(this);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.previous(userProcessContainer);
+    }//GEN-LAST:event_btnBackActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton assignJButton;
+    private javax.swing.JButton btnBack;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton processJButton;
     private javax.swing.JButton refreshJButton;
